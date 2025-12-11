@@ -1,0 +1,177 @@
+<html>
+<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+<title>Meditación v 1.0</title>
+<style>
+    body {
+        color: white;
+
+    }
+
+    #Contenedor {
+        align-items: center;
+        padding-top: 25vh;
+        font-size: 15pt;
+    }
+
+    #Tiempo {
+        display: flex;
+        justify-content: center;
+    }
+
+    table {
+        margin: auto;
+    }
+
+    p,
+    div,
+    table {
+        text-align: center;
+    }
+
+    #autor {
+        font-size: 10pt;
+    }
+</style>
+
+<body>
+    <div id='Contenedor'>
+        <h1>Meditación <br> Mindfulness</h1>
+        <p id='Ciclos'>-</p>
+        <table>
+            <tr>
+                <th>Inhalar</th>
+                <th>Retener</th>
+                <th>Exhalar</th>
+                <th>Retener</th>
+            </tr>
+            <tr>
+                <td id='Inhalar'>-</td>
+                <td id='Retener'>-</td>
+                <td id='Exhalar'>-</td>
+                <td id='Retener2'>-</td>
+            </tr>
+        </table>
+    </div>
+    <table>
+        <tr>
+            <th>
+                <h2>Tiempo: </h2>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <div id='Tiempo'>
+                    <p id='Horas'>-</p>
+                    <p id='Minutos'>-</p>
+                    <p id='Segundos'>-</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <p id='autor'>V 1.0 Juan Santoro</p>
+    </div>
+    <script>
+        const SegInhalar = 4;
+        const SegRetener = 4;
+        const SegExhalar = 4;
+        const Pitido = 1;
+
+        Inhalar = SegInhalar;
+        Retener = SegRetener;
+        Retener2 = SegRetener;
+        Exhalar = SegExhalar;
+
+        SegundosTotales = 0;
+        Ciclos = 0;
+
+        function Calculo() {
+            fechaHoy = new Date();
+            Minutos = SegundosTotales / 60;
+            Horas = Minutos / 60;
+
+            document.getElementById('Horas').innerHTML = " " + Math.floor(Horas);
+            document.getElementById('Minutos').innerHTML = ":" + Math.floor(Minutos);
+        }
+        function Inicio() {
+            reproducirSonido(110, Pitido);
+        }
+        function Meditar() {
+            if (Inhalar > 0) {
+                Inhalar--;
+                document.getElementById('Inhalar').innerHTML = " " + Inhalar;
+                document.body.style.backgroundColor = '#0F0';
+            }
+            else if ((Inhalar == 0) && (Retener == SegRetener)) {
+                reproducirSonido(349.23, Pitido);
+                Inhalar--;
+            }
+            else if (Retener > 0) {
+                Retener--;
+                document.getElementById('Retener').innerHTML = " " + Retener;
+                document.body.style.backgroundColor = '#FC0';
+            }
+            else if ((Retener == 0) && (Exhalar == SegExhalar)) {
+                reproducirSonido(392, Pitido);
+                Retener--;
+            }
+            else if (Exhalar > 0) {
+                Exhalar--;
+                document.getElementById('Exhalar').innerHTML = " " + Exhalar;
+                document.body.style.backgroundColor = '#F00'
+                //vibrar(750);
+            }
+            else if ((Exhalar == 0) && (Retener2 == SegExhalar)) {
+                reproducirSonido(349.23, Pitido);
+                Retener2--;
+            }
+            else if (Retener2 > 0) {
+                Retener2--;
+                document.getElementById('Retener2').innerHTML = " " + Retener2;
+                document.body.style.backgroundColor = '#FC0';
+            }
+            else if ((Retener2 == 0) && (Exhalar == SegExhalar)) {
+                reproducirSonido(392, Pitido);
+                Retener2--;
+            }
+            else {
+                reproducirSonido(440, Pitido)
+                Inhalar = SegInhalar;
+                Retener = SegRetener;
+                Retener2 = SegRetener;
+                Exhalar = SegExhalar;
+                Ciclos = Ciclos + 1;
+            }
+            SegundosTotales++
+            document.getElementById('Segundos').innerHTML = ":" + Math.floor(SegundosTotales % 60);
+            document.getElementById('Ciclos').innerHTML = "Ciclos: " + Math.floor(Ciclos);
+        }
+        //Ejecutar la función cada 1000 milisegundos = 1 segundo.
+        Inicio()
+        setInterval(Meditar, 1000);
+        setInterval(Calculo, 1000);
+
+        function reproducirSonido(Frec, Seg) {
+            // 1. Crear un AudioContext (contexto de audio)
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // 2. Crear un oscilador (fuente de sonido)
+            const oscillator = audioContext.createOscillator();
+
+            // 3. Configurar el tipo de onda (seno) y la frecuencia (un pitido)
+            oscillator.type = 'sine'; // Puedes usar 'square', 'sawtooth', o 'triangle'
+            oscillator.frequency.setValueAtTime(Frec, audioContext.currentTime); // 440 Hz es la nota La
+
+            // 4. Conectar el oscilador a la salida de audio y empezar a reproducir
+            oscillator.connect(audioContext.destination);
+            oscillator.start();
+
+            // 5. Detener el sonido después de un tiempo para que no suene para siempre
+            oscillator.stop(audioContext.currentTime + Seg); // Detener después de 0.5 segundos
+        }
+        function vibrar(A) {
+            window.navigator.vibrate(A);
+        }
+    </script>
+</body>
+
+</html>
